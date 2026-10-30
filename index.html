@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1eb">
+  <title>Апроксимація функцій · варіант 2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="brand"><span class="brand-mark">ƒ</span><span>Чисельні методи <span class="muted">/ лабораторна №1</span></span></div>
+      <div class="variant">ВАРІАНТ <b>02</b></div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">ІНТЕРАКТИВНА ВІЗУАЛІЗАЦІЯ</p>
+        <h1>Апроксимація<br><span>функцій</span></h1>
+        <p class="lead">Інтерполяційний поліном Лагранжа та метод найменших квадратів на табличних даних варіанта 2.</p>
+      </div>
+      <div class="formula-card"><span class="formula-label" id="datasetTitle">РЕЖИМ ВАРІАНТА</span><strong id="datasetValue">Набір варіанта (5 точок)</strong></div>
+    </section>
+
+    <section class="toolbar" aria-label="Налаштування графіка">
+      <div class="control-group">
+        <span class="control-label">НАБІР ВАРІАНТА</span>
+        <div class="segmented" role="group" aria-label="Кількість точок">
+          <button class="size-button active" data-size="5">5</button><button class="size-button" data-size="10">10</button><button class="size-button" data-size="20">20</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="method">МЕТОД</label>
+        <select id="method"><option value="all">Усі методи</option><option value="lagrange">Лагранж</option><option value="leastSquares">МНК</option></select>
+      </div>
+      <div class="control-group degree-control">
+        <label class="control-label" for="degree">СТЕПІНЬ МНК <span id="degreeValue">2</span></label>
+        <input id="degree" type="range" min="1" max="4" value="2">
+      </div>
+      <div class="toolbar-actions"><button id="play" class="play-button"><span>▶</span> Відтворити</button><button id="reset" class="icon-button" title="Скинути анімацію" aria-label="Скинути анімацію">↺</button></div>
+    </section>
+
+    <details class="custom-data">
+      <summary>Точки для графіка</summary>
+      <div class="custom-content">
+        <label class="control-label" for="customPoints">НОМЕРОВАНІ ПАРИ [x; y] ПО РЯДКАХ</label>
+        <textarea id="customPoints" rows="5" spellcheck="false" placeholder="1) [0; 1.0],&#10;2) [1; 2.7],&#10;3) [2; 7.4],&#10;4) [3; 20.1],&#10;5) [4; 54.6]"></textarea>
+        <div class="custom-actions"><span id="inputMessage" role="status">Графік оновлюється під час введення. Формат рядка: 1) [x; y],</span><div><button id="applyPoints" class="play-button">Застосувати точки</button><button id="presetPoints" class="text-button">Набір варіанта</button></div></div>
+      </div>
+    </details>
+
+    <section class="charts" aria-label="Графіки апроксимації">
+      <article class="chart-card">
+        <div class="chart-heading"><div><p class="eyebrow">01 / ПОБУДОВА</p><h2>Криві наближення</h2></div><span id="pointCount" class="count-badge">5 точок</span></div>
+        <div class="legend"><span><i class="dot data-dot"></i>Дані</span><span><i class="line lagrange-line"></i>Лагранж</span><span><i class="line ls-line"></i>МНК</span><span><i class="line exact-line"></i>eˣ</span></div>
+        <canvas id="chart" aria-label="Графік точок і кривих апроксимації"></canvas>
+        <div class="chart-foot"><span>Автоматичний масштаб осей</span><span id="chartStatus">Готово до побудови</span></div>
+      </article>
+      <article class="chart-card residual-card">
+        <div class="chart-heading"><div><p class="eyebrow">02 / ПОХИБКА</p><h2>Залишки МНК</h2></div><span class="count-badge subtle">eᵢ = yᵢ − ŷᵢ</span></div>
+        <div class="legend"><span><i class="residual-line"></i>Залишок</span><span><i class="dot data-dot"></i>Вузол</span></div>
+        <canvas id="residuals" aria-label="Графік залишків методу найменших квадратів"></canvas>
+        <div class="chart-foot"><span>Нульова лінія позначена пунктиром</span><span id="residualStatus">МНК, m = 2</span></div>
+      </article>
+    </section>
+
+    <section class="detail-grid" aria-label="Деталі розрахунків для вибраного набору">
+      <article class="detail-card">
+        <p class="eyebrow">03 / МНК</p><h2>Поліном МНК</h2>
+        <div id="fitFormula" class="polynomial">—</div>
+        <dl id="fitMetrics" class="detail-list"></dl>
+      </article>
+      <article class="detail-card">
+        <p class="eyebrow">03 / ІНТЕРПОЛЯЦІЯ</p><h2>Лагранж / Ньютон</h2>
+        <dl id="lagrangeDetails" class="detail-list"></dl>
+        <p class="mini-label">Поділені різниці Ньютона</p>
+        <div id="newtonCoefficients" class="coefficient-list"></div>
+      </article>
+      <article class="detail-card point-table-card">
+        <p class="eyebrow">03 / ТАБЛИЦЯ ДАНИХ</p><h2>Точки, ŷ та залишки</h2>
+        <div class="point-table-wrap"><table class="point-table"><thead><tr><th>i</th><th>xᵢ</th><th>yᵢ</th><th>ŷᵢ</th><th>eᵢ</th></tr></thead><tbody id="pointDetails"></tbody></table></div>
+      </article>
+    </section>
+
+    <section class="all-plots">
+      <div class="results-title"><div><p class="eyebrow">04 / УСІ НАБОРИ</p><h2>Шість графіків для порівняння</h2></div><p>Для кожної кількості вузлів побудовано окремі графіки Лагранжа та МНК.</p></div>
+      <div id="miniCharts" class="mini-grid" aria-label="Шість графіків для 5, 10 і 20 вузлів"></div>
+    </section>
+
+    <section class="results">
+      <div class="results-title"><div><p class="eyebrow">05 / АНАЛІТИКА</p><h2>Порівняння наборів (5 / 10 / 20 точок)</h2></div><p>Для МНК показано RSS, R² і LOO-RMSE; для Лагранжа — діапазон кривої та LOO-RMSE.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Набір</th><th>n фактичне</th><th>Степінь Л</th><th>min … max L(x)</th><th>LOO-RMSE Л</th><th>m МНК</th><th>RSS МНК</th><th>R² МНК</th><th>LOO-RMSE МНК</th></tr></thead><tbody id="metrics"></tbody></table></div>
+      <p class="table-note">Для набору «10 точок» Excel містить 8 пар варіанта 2, тому в стовпці n показано фактичну кількість даних. LOO-RMSE — похибка перехресної перевірки: кожна точка по черзі виключається з розрахунку. «—» означає, що після виключення точки даних замало для вибраного степеня МНК.</p>
+    </section>
+
+    <footer><span>Лабораторна робота № 1 · Жуков Михайло Володимирович</span><span>JavaScript · Canvas · варіант 2</span></footer>
+  </main>
+  <script src="math.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

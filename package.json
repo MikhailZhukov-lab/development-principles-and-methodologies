@@ -1,0 +1,9 @@
+{
+  "name": "function-approximation-variant-2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Лабораторна робота № 1: інтерполяція та МНК",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
